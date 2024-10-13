@@ -4,7 +4,7 @@ import java.util.Scanner;
 public class Checkers {
     static byte turn = 0;
     public static void CapturePiece(int[] board, int opponent){
-        board[(turn+1) %2] = Utility.clearBit(board[turn + 1 % 2],opponent);
+        board[(1- turn)] = Utility.clearBit(board[1- turn],opponent);
     }
     public static void multiJump(int pos,boolean king, byte turn,int[] board){
         int[] direction;
@@ -21,19 +21,21 @@ public class Checkers {
         }
         for (int jump: direction){//iterate through the possible second jump moves then recursive calls again for triple then quadruple jump
             int endpos = pos + jump;
-            if (IsLegalMove(board,pos,endpos)){//protocol for setting a legal p=moves
+            if (IsLegalMove(board,pos,endpos)) {
                 if (31 >= endpos && endpos >= 28 && turn == 0 || 0 <= endpos && endpos < 4 && turn == 1){//king promo
                     board[2] = Utility.toggleBit(board[2],endpos);
                 }
-                board[turn] = Utility.setBit(board[turn], endpos);
-                board[turn] = Utility.clearBit(board[turn], pos);
+                board[turn] = Utility.setBit(board[turn], endpos);//set the new board state for legal move
+                board[turn] = Utility.clearBit(board[turn], pos);//clearing previous position
                 if (Utility.getBit(board[2],pos)){//check for king new position on the king bitboard
                     board[2] = Utility.setBit(board[2], endpos);
                     board[2] = Utility.clearBit(board[2], pos);
                 }
+                if (Math.abs(endpos - pos) > 5){//check for multi-jump trick
                     multiJump(endpos,Utility.getBit(board[2],endpos),turn, board);
+                }
+                multiJump(endpos,Utility.getBit(board[2],endpos),turn, board);
 
-            return;
             }
 
         }
@@ -64,13 +66,15 @@ public class Checkers {
         }
         int add = Utility.Addition(board[0], board[1]);//adding occupied square of light and dark together
         int empty = ~add;//empty square flip to ones
-        int opponent = board[(turn + 1) % 2];// calculating capture of occupied square
-
+        int opponent = board[(1 - turn)];// calculating capture of occupied square
+        if (Utility.getBit(add,end)){//if you pick an occupied square, do not move
+            return false;
+        }
 
         if (Utility.getBit(board[turn],position)) {//check if it's the player piece
 
             if (turn == 0 || Utility.getBit(board[2],position)) {//check the king to move also
-                if ((position  / 4 +1) % 2 == 0 && Utility.getBit(empty,end)) {//pattern for even and odd rows
+                if ((position  / 4 +1) % 2 == 0 && Utility.getBit(empty,end)) {//pattern for even row else odd
                     if ((end == position + 4 || end == position + 3)) {//potential diagonal moves
                         return true;
                     } //conditional edge case
@@ -86,6 +90,7 @@ public class Checkers {
                             System.out.println("Cannot capture King using pawn");
                             return false;
                         }
+
 
                         CapturePiece(board,position +4);
                         return true;
@@ -110,10 +115,12 @@ public class Checkers {
                 else {//odd row for diagonal moves and checking for empty squares
                     if (end == position + 5 || end == position + 4 && Utility.getBit(empty,end)) {
                         return true;
-                    } else if (position + 1 % 4 == 0 && end == position + 4 && Utility.getBit(empty,end)) {//boundary edge of the left side
+                    }
+                    else if (position + 1 % 4 == 0 && end == position + 4 && Utility.getBit(empty,end)) {//boundary edge of the left side
                         return true;
-                    }//left capture
-                    else if ((position) % 4 != 0 && end == position + 9 && Utility.getBit(opponent,position + 4)) {//see if we can capture
+                    }
+                    //left capture
+                    else if ((position+1) % 4 != 0 && end == position + 9 && Utility.getBit(opponent,position + 5)) {// if we can capture
                         if (Utility.getBit(board[2],position+4)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
@@ -123,12 +130,11 @@ public class Checkers {
                             System.out.println("Cannot capture King using pawn");
                             return false;
                         }
-
-
-                        CapturePiece(board,position +4);
+                        CapturePiece(board,position + 5);
                         return true;
-                    }//right capture
-                    else if ((position+1) % 4 != 0 && end == position + 7 && Utility.getBit(opponent,position + 3)) {//see if we can capture
+                    }
+                    //right capture
+                    else if ((position) % 4 != 0 && end == position + 7 && Utility.getBit(opponent,position + 4)) {//see if we can capture
                         if (Utility.getBit(board[2],position+3)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
@@ -139,7 +145,7 @@ public class Checkers {
                             return false;
                         }
 
-                        CapturePiece(board,position +3);
+                        CapturePiece(board,position +4);
                         return true;
                     }
 
@@ -147,7 +153,7 @@ public class Checkers {
             }
              if (turn == 1|| Utility.getBit(board[2],position)) {//can go backward or forward depend on player moves
                 //left move
-                if ((position / 4) % 2 == 1) {
+                if ((position / 4) % 2 == 1) {//even
                     if (end == position - 4 || end == position - 5 && Utility.getBit(empty,end)) { //downward board moves for diagonal
                         return true;
                     }//right  move
@@ -184,7 +190,7 @@ public class Checkers {
                     return true;
                 }
                 }
-                else {
+                else {//odd rows
                     if (end == position - 4 || end == position - 3 && Utility.getBit(empty,end)) {// odd rows special case for diagonal moves
                         return true;
                     } else if ((position + 1) % 4 == 0 && end == position - 4 && Utility.getBit(empty,end)) {// checking the left side boundary case legal moves
@@ -205,26 +211,25 @@ public class Checkers {
 
                         CapturePiece(board,position -3);
                         return true;
-                    }//right capture
+                    }
+                    //right capture
                     else if ((position) % 4 != 0 && end == position - 9 && Utility.getBit(opponent,position - 4)) {//see if we can capture
-                        if (Utility.getBit(board[2],position-4)){
-                            if (Utility.getBit(board[2],position)){
-                                board[2] = Utility.toggleBit(board[2],opponent);//demote the king
+                        if (Utility.getBit(board[2], position - 4)) {
+                            if (Utility.getBit(board[2], position)) {
+                                board[2] = Utility.toggleBit(board[2], opponent);//demote the king
 
                                 return true;
                             }
                             System.out.println("Cannot capture King using pawn");
                             return false;
                         }
-
-
-                        CapturePiece(board,position -4);
+                     CapturePiece(board,position - 4);
                         return true;
                     }
 
-                }
+
             }
-        }
+        }}
    return false; }
     public static void InitializeBoard(int[] board){
 
@@ -289,7 +294,7 @@ public class Checkers {
         InitializeBoard(board);
 
         while (UpdateGameState(board)){//update the state of the game if it is a win or not
-            PrintBoard(board);//creating the board in ascii
+            PrintBoard(board);//creating the board in ascii table
             System.out.println("Turn " + turn);
             System.out.println("Play: position & move");
           String[] s =scanner.nextLine().split(" ");
