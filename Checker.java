@@ -28,8 +28,8 @@ public class Checkers {
                 board[turn] = Utility.setBit(board[turn], endpos);
                 board[turn] = Utility.clearBit(board[turn], pos);
                 if (Utility.getBit(board[2],pos)){//check for king new position on the king bitboard
-                    board[2] = Utility.setBit(board[turn], endpos);
-                    board[2] = Utility.clearBit(board[turn], pos);
+                    board[2] = Utility.setBit(board[2], endpos);
+                    board[2] = Utility.clearBit(board[2], pos);
                 }
                     multiJump(endpos,Utility.getBit(board[2],endpos),turn, board);
 
@@ -46,8 +46,8 @@ public class Checkers {
               board[turn] = Utility.setBit(board[turn], end);//set the new board state for legal move
               board[turn] = Utility.clearBit(board[turn], position);//clearing previous position
               if (Utility.getBit(board[2],position)){//check for king new position on the king bitboard
-                  board[2] = Utility.setBit(board[turn], end);
-                  board[2] = Utility.clearBit(board[turn], position);
+                  board[2] = Utility.setBit(board[2], end);
+                  board[2] = Utility.clearBit(board[2], position);
               }
               if (Math.abs(end - position) > 5){//check for multi-jump trick
                   multiJump(end,Utility.getBit(board[2],end),turn, board);
