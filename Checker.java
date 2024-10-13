@@ -78,7 +78,7 @@ public class Checkers {
                         return true;
                     }//left capture
                     else if ((position+1) % 4 != 0 && end == position + 9 && Utility.getBit(opponent,position + 4)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position+4)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
                                 return true;
@@ -91,7 +91,7 @@ public class Checkers {
                         return true;
                     }//right capture
                     else if (position % 4 != 0 && end == (position + 7) && Utility.getBit(opponent,position + 3)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position+3)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
                                 return true;
@@ -114,7 +114,7 @@ public class Checkers {
                         return true;
                     }//left capture
                     else if ((position) % 4 != 0 && end == position + 9 && Utility.getBit(opponent,position + 4)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position+4)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -129,7 +129,7 @@ public class Checkers {
                         return true;
                     }//right capture
                     else if ((position+1) % 4 != 0 && end == position + 7 && Utility.getBit(opponent,position + 3)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position+3)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -155,7 +155,7 @@ public class Checkers {
                     return true;
                 }//left capture
                 else if ((position+1) % 4 != 0 && end == position - 7 && Utility.getBit(opponent,position - 4)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position-4)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -170,7 +170,7 @@ public class Checkers {
                     return true;
                 }//right capture
                 else if (position % 4 != 0 && end == position - 9 && Utility.getBit(opponent,position - 5)) {//see if we can capture
-                    if (Utility.getBit(board[2],opponent)){
+                    if (Utility.getBit(board[2],position-5)){
                         if (Utility.getBit(board[2],position)){
                             board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -192,7 +192,7 @@ public class Checkers {
                     }
                     //left capture
                     else if ((position+1) % 4 != 0 && end == position - 7 && Utility.getBit(opponent,position - 3)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position-3)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -207,7 +207,7 @@ public class Checkers {
                         return true;
                     }//right capture
                     else if ((position) % 4 != 0 && end == position - 9 && Utility.getBit(opponent,position - 4)) {//see if we can capture
-                        if (Utility.getBit(board[2],opponent)){
+                        if (Utility.getBit(board[2],position-4)){
                             if (Utility.getBit(board[2],position)){
                                 board[2] = Utility.toggleBit(board[2],opponent);//demote the king
 
@@ -278,7 +278,7 @@ public class Checkers {
             return false;
         }// checks non-capturing or capturing legal moves board pieces and players' kings on the board
        else if ((board[0] << 4 & ~(Utility.Addition(board[0],board[1]))) == 0 || (board[1] >> 4 & ~(Utility.Addition(board[0],board[1]))) == 0 && (board[2] & board[turn]) != 0){
-            System.out.println("draw/stalemate, no more legal move");
+            System.out.println("Player " + (1- turn) + " Wins");
            return false;
         }
 
@@ -297,9 +297,8 @@ public class Checkers {
 
         }
         //turn based board game
-        //11 15 23 19 7 11 22 18 2 7 26 23 8 12 31 26 15 22
+        //11 15 23 19 7 11 22 18 2 7 26 23 8 12 31 26 15 22 19 15 31 26 23 19
 
 
     }
 }
-
