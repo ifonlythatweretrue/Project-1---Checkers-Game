@@ -145,7 +145,7 @@ public class Checkers {
 
                 }
             }
-            else if (turn == 1|| Utility.getBit(board[2],position)) {//can go backward or forward depend on player moves
+             if (turn == 1|| Utility.getBit(board[2],position)) {//can go backward or forward depend on player moves
                 //left move
                 if ((position / 4) % 2 == 1) {
                     if (end == position - 4 || end == position - 5 && Utility.getBit(empty,end)) { //downward board moves for diagonal
